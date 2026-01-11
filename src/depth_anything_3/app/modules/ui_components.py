@@ -55,7 +55,6 @@ class UIComponents:
             label="Preview",
             columns=4,
             height="300px",
-            show_download_button=True,
             object_fit="contain",
             preview=True,
             interactive=False,
@@ -238,6 +237,7 @@ class UIComponents:
         gr.Checkbox,
         gr.Slider,
         gr.Slider,
+        gr.Checkbox,
         gr.Dropdown,
         gr.Dropdown,
         gr.Button,
@@ -279,7 +279,7 @@ class UIComponents:
             save_percentage = gr.Slider(
                 minimum=0,
                 maximum=100,
-                value=10,
+                value=5,
                 step=1,
                 label="Filter Percentage",
                 info="Confidence Threshold (%): Higher values filter more points.",
@@ -287,10 +287,15 @@ class UIComponents:
             num_max_points = gr.Slider(
                 minimum=1000,
                 maximum=100000,
-                value=1000,
+                value=5000,
                 step=1000,
                 label="Max Points (K points)",
                 info="Maximum number of points to export to GLB (in thousands)",
+            )
+            export_ply = gr.Checkbox(
+                label="Export PLY (MeshLab compatible)",
+                value=True,
+                info="Additionally export point cloud as PLY file for MeshLab",
             )
 
         return (
@@ -299,6 +304,7 @@ class UIComponents:
             filter_white_bg,
             save_percentage,
             num_max_points,
+            export_ply,
             gs_trj_mode,
             gs_video_quality,
             submit_btn,

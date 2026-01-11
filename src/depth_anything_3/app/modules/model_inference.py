@@ -29,6 +29,7 @@ from depth_anything_3.api import DepthAnything3
 from depth_anything_3.utils.memory import cleanup_cuda_memory
 from depth_anything_3.utils.export.glb import export_to_glb
 from depth_anything_3.utils.export.gs import export_to_gs_video
+from depth_anything_3.utils.export.ply import export_to_ply
 
 
 class ModelInference:
@@ -68,10 +69,12 @@ class ModelInference:
         show_camera: bool = True,
         save_percentage: float = 30.0,
         num_max_points: int = 1_000_000,
+        export_ply: bool = False,
         infer_gs: bool = False,
         ref_view_strategy: str = "saddle_balanced",
         gs_trj_mode: str = "extend",
         gs_video_quality: str = "high",
+        use_ray_pose: bool = True,
     ) -> Tuple[Any, Dict[int, Dict[str, Any]]]:
         """
         Run DepthAnything3 model inference on images.
@@ -84,10 +87,12 @@ class ModelInference:
             show_camera: Whether to show camera in 3D view
             save_percentage: Percentage of points to save (0-100)
             num_max_points: Maximum number of points in point cloud
+            export_ply: Whether to export PLY file for MeshLab compatibility
             infer_gs: Whether to infer 3D Gaussian Splatting
             ref_view_strategy: Reference view selection strategy
             gs_trj_mode: Trajectory mode for 3DGS
             gs_video_quality: Video quality for 3DGS
+            use_ray_pose: Use ray-based pose estimation (default: True for Gradio)
 
         Returns:
             Tuple of (prediction, processed_data)
@@ -137,8 +142,9 @@ class ModelInference:
                 process_res_method=actual_method,
                 infer_gs=infer_gs,
                 ref_view_strategy=ref_view_strategy,
+                use_ray_pose=use_ray_pose,
             )
-        # num_max_points: int = 1_000_000,
+        # Export to GLB (always, for 3D viewer)
         export_to_glb(
             prediction,
             filter_black_bg=filter_black_bg,
@@ -149,7 +155,18 @@ class ModelInference:
             num_max_points=int(num_max_points),
         )
 
-        # export to gs video if needed
+        # Export to PLY if requested (for MeshLab compatibility)
+        if export_ply:
+            export_to_ply(
+                prediction,
+                filter_black_bg=filter_black_bg,
+                filter_white_bg=filter_white_bg,
+                export_dir=target_dir,
+                conf_thresh_percentile=save_percentage,
+                num_max_points=int(num_max_points),
+            )
+
+        # Export to GS video if needed
         if infer_gs:
             mode_mapping = {"extend": "extend", "smooth": "interpolate_smooth"}
             print(f"GS mode: {gs_trj_mode}; Backend mode: {mode_mapping[gs_trj_mode]}")

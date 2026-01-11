@@ -141,6 +141,7 @@ class EventHandlers:
         process_res_method: str = "upper_bound_resize",
         save_percentage: float = 30.0,
         num_max_points: int = 1_000_000,
+        export_ply: bool = False,
         infer_gs: bool = False,
         ref_view_strategy: str = "saddle_balanced",
         gs_trj_mode: str = "extend",
@@ -168,6 +169,7 @@ class EventHandlers:
             process_res_method: Method for resizing input images
             save_percentage: Filter percentage for point cloud
             num_max_points: Maximum number of points
+            export_ply: Whether to export PLY file for MeshLab compatibility
             infer_gs: Whether to infer 3D Gaussian Splatting
             ref_view_strategy: Reference view selection strategy
 
@@ -207,6 +209,7 @@ class EventHandlers:
                 show_camera=show_cam,
                 save_percentage=save_percentage,
                 num_max_points=int(num_max_points * 1000),  # Convert K to actual count
+                export_ply=export_ply,
                 infer_gs=infer_gs,
                 ref_view_strategy=ref_view_strategy,
                 gs_trj_mode=gs_trj_mode,
