@@ -15,6 +15,8 @@
 from __future__ import annotations
 
 import os
+import time
+
 import numpy as np
 import trimesh
 
@@ -110,6 +112,9 @@ def export_to_glb(
     if prediction.processed_images is None:
         raise ValueError("prediction.processed_images is required but not available")
 
+    # Start post-processing timer
+    postprocess_start = time.perf_counter()
+
     images_u8 = prediction.processed_images  # (N,H,W,3) uint8
 
     # 2) Sky processing (if sky_mask is provided)
@@ -172,6 +177,10 @@ def export_to_glb(
             image_sizes=[(H, W)] * prediction.depth.shape[0],
             scale=scene_scale * camera_size,
         )
+
+    # End post-processing timer (before file I/O)
+    postprocess_time = time.perf_counter() - postprocess_start
+    print(f"Post-processing time: {postprocess_time:.3f} seconds")
 
     # 9) Export
     os.makedirs(export_dir, exist_ok=True)
