@@ -68,7 +68,7 @@ We release three series of models, each tailored for specific use cases in visua
 Our repository is designed to be a powerful and user-friendly toolkit for both practical application and future research.
 - 🎨 **Interactive Web UI & Gallery**: Visualize model outputs and compare results with an easy-to-use Gradio-based web interface.
 - ⚡ **Flexible Command-Line Interface (CLI)**: Powerful and scriptable CLI for batch processing and integration into custom workflows.
-- 💾 **Multiple Export Formats**: Save your results in various formats, including `glb`, `npz`, depth images, `ply`, 3DGS videos, etc, to seamlessly connect with other tools.
+- 💾 **Multiple Export Formats**: Save your results in various formats, including `glb`, `npz`, depth images, `ply`, `colmap`, `volsplat`, 3DGS videos, etc, to seamlessly connect with other tools.
 - 🔧 **Extensible and Modular Design**: The codebase is structured to facilitate future research and the integration of new models or functionalities.
 
 
@@ -195,6 +195,24 @@ Model = create_object(load_config("path/to/new/config"))
 ```
 
 
+
+### VolSplat Export
+
+DA3 can export camera parameters and images directly to [VolSplat](https://github.com/tsuyoshimishina/VolSplat/tree/verify-feb-2026)'s RE10k `.torch` format, enabling novel view synthesis without an external SfM pipeline.
+
+```bash
+# Export VolSplat data from multiple images (images must be 360x640 or 720x1280)
+da3 image frame1.jpg frame2.jpg frame3.jpg \
+    --export-format volsplat --export-dir ./output
+
+# Combine with other formats
+da3 video video.mp4 --fps 2.0 \
+    --export-format volsplat-glb --export-dir ./output
+```
+
+Output: `{export_dir}/volsplat/test/000000.torch` + `index.json`. See [volsplat.md](volsplat.md) for details on the data format and camera conventions.
+
+> **Note:** VolSplat's `DatasetRE10k` expects images sized 360x640 (or 720x1280 with `highres`). The exporter validates this and errors on mismatched resolutions. To use arbitrary sizes, set `dataset.skip_bad_shape=false` on the VolSplat side.
 
 ## 📚 Useful Documentation
 

@@ -268,6 +268,15 @@ class DepthAnything3(nn.Module, PyTorchModelHubMixin):
                         "process_res_method": process_res_method,
                     }
                 )
+            # Add VolSplat export parameters
+            if "volsplat" in export_format:
+                if "volsplat" not in export_kwargs:
+                    export_kwargs["volsplat"] = {}
+                export_kwargs["volsplat"].update(
+                    {
+                        "image_paths": image,
+                    }
+                )
             self._export_results(prediction, export_format, export_dir, **export_kwargs)
 
         return prediction

@@ -21,6 +21,7 @@ from .feat_vis import export_to_feat_vis
 from .glb import export_to_glb
 from .npz import export_to_mini_npz, export_to_npz
 from .ply import export_to_ply
+from .volsplat import export_to_volsplat
 
 
 def export(
@@ -53,6 +54,8 @@ def export(
         export_to_colmap(prediction, export_dir, **kwargs.get(export_format, {}))
     elif export_format == "ply":
         export_to_ply(prediction, export_dir, **kwargs.get(export_format, {}))
+    elif export_format == "volsplat":
+        export_to_volsplat(prediction, export_dir, **kwargs.get(export_format, {}))
     else:
         raise ValueError(f"Unsupported export format: {export_format}")
 
